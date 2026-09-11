@@ -114,6 +114,8 @@ pcscore_plot(img1)
 
  4. Give your opinion for each image of at what value of 𝑘 you think the approximation to the image is sufficiently good.
 
+This image is sufficiently clear at *k* = 9; although the line is clear at *k* = 1, the yellow doesn't appear until *k* = 9.
+
 </details>
 
 
@@ -147,6 +149,8 @@ pcscore_plot(img2)
 ```
 
  4. Give your opinion for each image of at what value of 𝑘 you think the approximation to the image is sufficiently good.
+
+This image is sufficiently clear at *k* = 2.
 
 </details>
 
@@ -182,6 +186,8 @@ pcscore_plot(img3)
 
  4. Give your opinion for each image of at what value of 𝑘 you think the approximation to the image is sufficiently good.
 
+This image is sufficiently clear at *k* = 10, as in a viewer can tell that it's a dog if they squint.
+
 </details>
 
 
@@ -215,6 +221,8 @@ pcscore_plot(img4)
 ```
 
  4. Give your opinion for each image of at what value of 𝑘 you think the approximation to the image is sufficiently good.
+
+This image is sufficiently clear at *k* = 4.
 
 </details>
 
