@@ -209,9 +209,7 @@ first_10_img(img4)
 k_error(img4)
 ```
 
- 3. A plot of the first eigenvector and the first PC score; provide an interpretation of the
-
-first eigenvector and the first PC score along with the plot;
+ 3. A plot of the first eigenvector and the first PC score; provide an interpretation of the first eigenvector and the first PC score along with the plot;
 
 ```{r eigen4_plot}
 # First eigenvector
