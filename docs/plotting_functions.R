@@ -7,7 +7,7 @@
 first_10_img <- function(img){
   
   # 1) Original image ---------
-  image(as.matrix(img))
+  image(as.matrix(img), sub = "Original image")
   
   # 2) First 10 PCA approximations ----
   for (i in 1:10){
