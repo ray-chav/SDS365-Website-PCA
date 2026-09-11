@@ -12,14 +12,11 @@ first_10_img <- function(img){
   # 2) First 10 PCA approximations ----
   for (i in 1:10){
     
-    # Print the k value
-    print(paste("This is k value:", i))
-    
     # Grab function output
     pca_k = compress_image(img, i)
     
     # Create compressed image
-    image(pca_k[[1]])
+    image(pca_k[[1]], sub = paste("This is k value:", i))
     
   }
 }
