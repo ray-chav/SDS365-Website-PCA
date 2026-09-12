@@ -160,10 +160,10 @@ server <- function(input, output, session) {
     
     # ROUTE 1: If it's a csv, run image()
     if (file_ext == "csv") {
-      image(as.matrix(data))
+      image(as.matrix(data), axes = FALSE)
       # ROUTE 2: If it's already an image, just show it off
     } else {
-      plot(data)
+      plot(data, axes = FALSE)
     }
   })
   
@@ -182,20 +182,21 @@ server <- function(input, output, session) {
       # Grab function output
       pca_k = compress_image(data, input$bins) # FIX PLACEHOLDER.. input$bins?
       # Create compressed image
-      image(pca_k[[1]])
+      image(pca_k[[1]], axes = FALSE)
       
       # ROUTE 2: If it's already an image, just show it off
     } else {
       
       # FIX: UR USING THE FILE PATH BRUH
       pca_k = compress_image_from_imager(input$img_file$datapath, input$bins) # PLACEHODLER
-      plot(pca_k$image)
+      plot(pca_k$image, axes = FALSE)
       
     }
     
   })
   
 }
+?image
 
 # Run the application 
 shinyApp(ui = ui, server = server)
