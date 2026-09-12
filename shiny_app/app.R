@@ -180,7 +180,7 @@ server <- function(input, output, session) {
     if (file_ext == "csv") {
       
       # Grab function output
-      pca_k = compress_image(5) # FIX PLACEHOLDER.. input$bins?
+      pca_k = compress_image(data, input$bins) # FIX PLACEHOLDER.. input$bins?
       # Create compressed image
       image(pca_k[[1]])
       
@@ -188,7 +188,7 @@ server <- function(input, output, session) {
     } else {
       
       # FIX: UR USING THE FILE PATH BRUH
-      pca_k = compress_image_from_imager(input$img_file$datapath, 5) # PLACEHODLER
+      pca_k = compress_image_from_imager(input$img_file$datapath, input$bins) # PLACEHODLER
       plot(pca_k$image)
       
     }
