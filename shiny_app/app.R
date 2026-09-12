@@ -23,109 +23,115 @@ source('convert_img_to_mat.R')
 # SIDEBAR UI ==================================
 # Sidebar for uploading images and choosing k
 ui <- page_sidebar(
-
-    # Application title
-    title = "PCA Image Compression - SDS365",
-    
-    # Background color
+  
+  # Application title
+  title = "PCA Image Compression - SDS365",
+  
+  # Background color
+  bg = "#fffffa",
+  
+  # Collapsible sidebar w/ instructions & input
+  sidebar = sidebar(
+    position = "left",
     bg = "#fffffa",
     
-    # Collapsible sidebar w/ instructions & input
-    sidebar = sidebar(
-      position = "left",
-      bg = "#fffffa",
-      
-      title = "Image Compressor",
-      p("Compress an image by uploading your file
+    title = "Image Compressor",
+    p("Compress an image by uploading your file
         and then choosing your", em("k.")),
-      
-      
-      # UPLOADING IMAGE FILE ==================
-      fileInput(
-        "img_file", "Upload your image here",
-         accept = c(".csv", ".jpg", ".jpeg", ".bmp", ".tiff")
-      ),
-      
-      # CHOOSING USER K =======================
-      sliderInput("bins", # K GOES HERE
-                    "Pick compression level",
-                    min = 1,
-                    max = 50, # MAX P HERE
-                    value = 30) # MAX P HERE
-        
-      ),
     
-    # Card to contain original image
-    card(
-      card_header("Original image:"),
-      imageOutput("original_image") # Show origiinal image file
+    
+    # UPLOADING IMAGE FILE ==================
+    fileInput(
+      "img_file", "Upload your image here",
+      accept = c(".csv", ".jpg", ".jpeg", ".bmp", ".tiff")
     ),
     
-    # Card to contain compressed image
-    card(
-      card_header("Edited image:"),
-      imageOutput("edited_image") # Show edited compressed image
-    )
+    # CHOOSING USER K =======================
+    sliderInput("bins", # K GOES HERE
+                "Pick compression level",
+                min = 1,
+                max = 50, # MAX P HERE
+                value = 30) # MAX P HERE
     
+  ),
+  
+  # Card to contain original image
+  card(
+    card_header("Original image:"),
+    plotOutput("original_image") # Show origiinal image file
+  ),
+  
+  # Card to contain compressed image
+  card(
+    card_header("Edited image:")
+    #imageOutput("edited_image") # Show edited compressed image
+  )
+  
 )
 
 # Define server logic required to draw a histogram
 server <- function(input, output, session) {
   
-  # VALIDATE FILE TYPE ============
+  # VALIDATE FILE TyPE ====================
   check_file_type <- reactive({
     
-    # Run only when we have an uploaded file
+    # Ensure there was a user input first
     req(input$img_file)
-    # Grab inputted file (if it exists)
-    file <- input$img_file
     
-    # Get file extension from uploaded file name
-    file_ext <- tools::file_ext(file$datapath)
+    # Grab file extension
+    file_ext <- tools::file_ext(input$img_file$name)
     
-    # Validate file type
+    # Make sure the file type is actually valid-
+    # should be filtered from the ui but the tutorial says this so..
     validate(
-      need(file_ext %in% c("csv", "jpg", "jpeg", "bmp", "tiff"),
-           "Your file is not in the correct format.")
+      need(
+        file_ext %in% c("csv", "jpg", "jpeg", "bmp", "tiff"),
+        "Your file is not in the correct format."
+      )
     )
     
-    # Return whether or not this file is a csv
-    is_csv = file_ext == "csv"
-    return(is_csv)
+    # Return the validity of this file
+    file_ext
   })
-
-  # CALCULATE MAX K VALUE =====================
+  
+  
+  # READ THE FILE ==========================
+  uploaded_data <- reactive({
+    
+    # Ensure there was a user input first
+    req(input$img_file)
+    
+    # Grab the file and make sure it's valid
+    file <- input$img_file
+    file_ext <- check_file_type()
+    
+    # Read in the data into  th eoutput
+    if (file_ext == "csv") {
+      read.csv(file$datapath)
+    } else {
+      load.image(file$datapath)
+    }
+  })
+  
+  
+  # CALCULATE MAX K =========================
   calculated_max <- reactive({
     
-    # Run only when we have an uploaded file
-    req(input$img_file)
-    # Grab inputted file (if it exists)
-    file <- input$img_file
+    # Grab our data
+    data <- uploaded_data()
+    file_ext <- check_file_type()
     
-    is_csv = check_file_type(file$datapath)
-    
-    # ROUTE 1: CSV FILE =======================
-    if (is_csv){
-      csv_df <- read.csv(file$datapath)
-      
-      # Calculate max k value
-      max_val <- ncol(csv_df)
-    }
-    
-    # ROUTE 2: IMAGE FILE =====================
-    else {
-      
-      # Read in image as values
-      # Read image
-      img <- load.image(file$datapath)
-      
-      # Split into RGB channels
-      channels <- imsplit(img, "c")
-      
-      # Grab max k-value
+    # ROUTE 1: File is a csv--max k value == p
+    if (file_ext == "csv") {
+      max_val <- ncol(data)
+      # ROUTE 2: File is an image--covert to RGB matrices first
+    } else {
+      channels <- imsplit(data, "c")
       max_val <- dim(channels[[1]])[2]
     }
-    return(max_val)
+    
+    # Return our maximum value of k
+    max_val
   })
   
   # UPDATE SLIDER MAX K DYNAMICALLY ==========
@@ -143,21 +149,26 @@ server <- function(input, output, session) {
   })
   
   # SHOW ORIGINAL IMAGE =======================
-  output$original_image <- renderImage({
+  output$original_image <- renderPlot({
     
+    # Grab the data of user input
+    data <- uploaded_data()
     
+    # Check file extension
+    # TODO: make this like less reptitive
+    file_ext <- check_file_type()
+    
+    # ROUTE 1: If it's a csv, run image()
+    if (file_ext == "csv") {
+      image(as.matrix(data))
+      # ROUTE 2: If it's already an image, just show it off
+    } else {
+      plot(data)
+    }
   })
   
-    # output$distPlot <- renderPlot({
-    #     # generate bins based on input$bins from ui.R
-    #     x    <- faithful[, 2]
-    #     bins <- seq(min(x), max(x), length.out = input$bins + 1)
-    # 
-    #     # draw the histogram with the specified number of bins
-    #     hist(x, breaks = bins, col = 'darkgray', border = 'white',
-    #          xlab = 'Waiting time to next eruption (in mins)',
-    #          main = 'Histogram of waiting times')
-    # })
+  # SHOW COMPRESSED IMAGE ====================
+  
 }
 
 # Run the application 
