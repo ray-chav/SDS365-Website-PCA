@@ -215,7 +215,7 @@ server <- function(input, output, session) {
   # # RANDOM K VALUE ===========================
   observeEvent(input$generate, {
     random_num <- round(runif(1, min = 1, max = 100))
-    
+    # Override the slider input
     updateSliderInput(
       session = session, 
       inputId = "bins", 
