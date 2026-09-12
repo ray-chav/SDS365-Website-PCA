@@ -63,8 +63,8 @@ ui <- page_sidebar(
   
   # Card to contain compressed image
   card(
-    card_header("Edited image:")
-    #imageOutput("edited_image") # Show edited compressed image
+    card_header("Edited image:"),
+    plotOutput("edited_image") # Show edited compressed image
   )
   
 )
@@ -168,6 +168,32 @@ server <- function(input, output, session) {
   })
   
   # SHOW COMPRESSED IMAGE ====================
+  output$edited_image <- renderPlot({
+    
+    # Grab the data of user input
+    data <- uploaded_data()
+    
+    # Check file extension
+    file_ext <- check_file_type()
+    
+    # ROUTE 1: csv -> straight PCA compression
+    if (file_ext == "csv") {
+      
+      # Grab function output
+      pca_k = compress_image(5) # FIX PLACEHOLDER.. input$bins?
+      # Create compressed image
+      image(pca_k[[1]])
+      
+      # ROUTE 2: If it's already an image, just show it off
+    } else {
+      
+      # FIX: UR USING THE FILE PATH BRUH
+      pca_k = compress_image_from_imager(input$img_file$datapath, 5) # PLACEHODLER
+      plot(pca_k$image)
+      
+    }
+    
+  })
   
 }
 
