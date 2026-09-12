@@ -39,6 +39,10 @@ ui <- page_sidebar(
     p("Compress an image by uploading your file
         and then choosing your", em("k.")),
     
+    tags$ul(
+      tags$li("Higher", em("k:"), "Less compression"),
+      tags$li("Lower", em("k:"), "More compression")
+    ),
     
     # UPLOADING IMAGE FILE ==================
     fileInput(
@@ -51,7 +55,20 @@ ui <- page_sidebar(
                 "Pick compression level",
                 min = 1,
                 max = 50, # MAX P HERE
-                value = 30) # MAX P HERE
+                value = 30), # MAX P HERE
+    
+    # RANDOM K ==============================
+    p("or"),
+    
+    # Action button for random generation
+    actionButton(
+      inputId = "generate", 
+      label = "Randomize Slider", 
+      icon = icon("random")
+    ),
+    
+    # Show current value of k
+    textOutput("current_value")
     
   ),
   
@@ -195,8 +212,23 @@ server <- function(input, output, session) {
     
   })
   
+  # # RANDOM K VALUE ===========================
+  observeEvent(input$generate, {
+    random_num <- round(runif(1, min = 1, max = 100))
+    
+    updateSliderInput(
+      session = session, 
+      inputId = "bins", 
+      value = random_num
+    )
+  })
+  
+  # SHOW CURRENT K VALUE =====================
+  output$current_value <- renderText({
+    paste("The selected number is:", input$bins)
+  })
+  
 }
-?image
 
 # Run the application 
 shinyApp(ui = ui, server = server)
