@@ -150,7 +150,7 @@ pcscore_plot(img2)
 
  4. Give your opinion for each image of at what value of 𝑘 you think the approximation to the image is sufficiently good.
 
-This image is sufficiently clear at *k* = 2.
+This image is sufficiently clear at *k* = 1.
 
 </details>
 
@@ -164,7 +164,7 @@ This image is sufficiently clear at *k* = 2.
 for that image;
 
 ```{r draw_img3}
-first_10_img(img3)
+first_10_img(img3, grayscale = TRUE)
 ```
 
  2. A plot of the approximation error vs. 𝑘 for all possible values of 𝑘
@@ -224,6 +224,110 @@ This image is sufficiently clear at *k* = 4.
 
 </details>
 
+<br>
+All the functions used to generate these plots can be found below.
 
+<details>
+
+<summary>Code Below</summary>
+
+```{r functions}
+
+# Input: image as a dataframe
+# Output: Original image, plus 10
+# PCA compression of that image
+first_10_img <- function(img,
+                         grayscale = FALSE){
+  
+  # 1) Original image ---------
+  if (grayscale){
+    # Grayscale the puppy image
+    image(as.matrix(img), sub = "Original image", col = gray.colors(255))
+  } else {
+    image(as.matrix(img), sub = "Original image")
+  }
+  
+  # 2) First 10 PCA approximations ----
+  for (i in 1:10){
+    
+    # Grab function output
+    pca_k = compress_image(img, i)
+    
+    # Create compressed image
+    #image(pca_k[[1]], sub = paste("This is k value:", i))
+    if (grayscale){
+      image(pca_k[[1]], sub = paste("This is k value:", i), col = gray.colors(255))
+    } else {
+      image(pca_k[[1]], sub = paste("This is k value:", i))
+    }
+    
+  }
+}
+
+# Input: image as a dataframe
+# Output: Made error
+k_error <- function(img){
+  
+  # Calculate highest number of dimensions p
+  p = dim(img)[2]
+  
+  # Set up vector of k errors
+  k_errors = numeric(p)
+  
+  # Loop through to find each error
+  for (i in 1:p){
+    pca_k= compress_image(img, i)
+    
+    # Add erroro value to vector
+    k_errors[i] = pca_k[[2]]
+  }
+  
+  # Make plot
+  plot(1:p, k_errors, 
+       main = "Approximate Error for all k", 
+       xlab = "k-value", 
+       ylab = "Approx. Error", 
+       pch = 16,
+       cex = 0.5, # make points smaller
+       col = "purple4")
+  
+}
+
+# Input: image as dataframe
+# Output: Plot of first eigenvector
+eigenvector_plot <- function(img){
+  
+  # Grab first eigenvector --------
+  cov_matrix = cov(img)
+  first_eigen = eigen(cov_matrix)$vectors[,1]
+  
+  # Make plot
+  barplot(first_eigen, 
+          main = "First Eigenvector", 
+          ylab = "Loading Value", 
+          xlab = "Variables",
+          col = 'lavender')
+  
+}
+
+# Input: image as dataframe
+# Output: Plot of first PC score
+pcscore_plot <- function(img){
+  
+  # Grab first PC score -----------
+  first_pcscore = prcomp(img)$x[,1]
+  
+  # Make plot
+  barplot(first_pcscore,
+          col = "lavender",
+          main = "First PC Score", 
+          ylab = "PC Score", 
+          xlab = "Sample Indiex",)
+  
+}
+
+```
+
+</details>
 
 -----------------------------------------------

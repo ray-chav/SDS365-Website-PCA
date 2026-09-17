@@ -24,6 +24,8 @@ source('convert_img_to_mat.R')
 # Sidebar for uploading images and choosing k
 ui <- page_sidebar(
   
+  includeCSS("pca_shiny.css"),
+  
   # Application title
   title = "PCA Image Compression - SDS365",
   
@@ -64,7 +66,8 @@ ui <- page_sidebar(
     actionButton(
       inputId = "generate", 
       label = "Randomize Slider", 
-      icon = icon("random")
+      icon = icon("random"),
+      style="color: #fff; background-color: #545724; border-color: #545724"
     ),
     
     # Show current value of k
@@ -177,7 +180,10 @@ server <- function(input, output, session) {
     
     # ROUTE 1: If it's a csv, run image()
     if (file_ext == "csv") {
-      image(as.matrix(data), axes = FALSE)
+      image(as.matrix(data),
+            axes = FALSE,
+            col = gray.colors(255),
+            asp = 1)
       # ROUTE 2: If it's already an image, just show it off
     } else {
       plot(data, axes = FALSE)
@@ -199,7 +205,9 @@ server <- function(input, output, session) {
       # Grab function output
       pca_k = compress_image(data, input$bins) # FIX PLACEHOLDER.. input$bins?
       # Create compressed image
-      image(pca_k[[1]], axes = FALSE)
+      image(pca_k[[1]], axes = FALSE,
+            col = gray.colors(255),
+            asp = 1)
       
       # ROUTE 2: If it's already an image, just show it off
     } else {

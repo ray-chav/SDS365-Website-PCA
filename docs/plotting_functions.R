@@ -4,10 +4,16 @@
 # Input: image as a dataframe
 # Output: Original image, plus 10
 # PCA compression of that image
-first_10_img <- function(img){
+first_10_img <- function(img,
+                         grayscale = FALSE){
   
   # 1) Original image ---------
-  image(as.matrix(img), sub = "Original image")
+  if (grayscale){
+    # Grayscale the puppy image
+    image(as.matrix(img), sub = "Original image", col = gray.colors(255))
+  } else {
+    image(as.matrix(img), sub = "Original image")
+  }
   
   # 2) First 10 PCA approximations ----
   for (i in 1:10){
@@ -16,7 +22,12 @@ first_10_img <- function(img){
     pca_k = compress_image(img, i)
     
     # Create compressed image
-    image(pca_k[[1]], sub = paste("This is k value:", i))
+    #image(pca_k[[1]], sub = paste("This is k value:", i))
+    if (grayscale){
+      image(pca_k[[1]], sub = paste("This is k value:", i), col = gray.colors(255))
+    } else {
+      image(pca_k[[1]], sub = paste("This is k value:", i))
+    }
     
   }
 }
