@@ -1,0 +1,229 @@
+---
+title: "SDS365 - HW2, Web Site"
+author: "Rachel Chavez - rcc3342"
+date: "2026-09-10"
+image: "cat_image.jpg"
+# output: html_documentg
+links:
+  - label: GitHub
+    url: "https://github.com/ray-chav?tab=repositories"
+output:
+  postcards::trestles
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, error = FALSE)
+```
+
+## Image Compression Function
+
+Make a static web site that shows the code for your image compression function in a code block.
+
+```{r img_function}
+
+# Input: (n x p) matrix image as a df, k dimensions
+# Output:
+#   1) rank k approximation using prcomp(), eigen()
+#   2) Error of rank k approx. using norm()
+compress_image <- function(
+                          image,
+                          k){
+  
+  ## Rank k Approx. ===============
+  # 1. Grab result of PCA (comes with eigenvectors)
+  pca_k = prcomp(image, rank. = k)
+  
+  # 2. Find U; (p x p) matrix of eigenvectors
+  U = pca_k$rotation # argument containing eigenvectors
+  
+  # 3. Find Z; (n x p) transformed PC matrix
+  Z = pca_k$x
+  
+  # 4. Compute rank k approximation of X
+  k_X = Z %*% t(U) # Requires transpose of U
+  # Rescale!
+  k_X = scale(k_X, center = -pca_k$center, scale = FALSE)
+  
+  ## Rank k Error Approx. =========
+  # 1. Define / Calculate error matrix
+  # using formula:
+  # X - rank X approx.
+  error_matrix = as.matrix(image) - k_X
+  
+  # 2. Approximate the error
+  # run: norm(error matrix, "F")
+  err_norm = norm(error_matrix, "F")
+  
+  ## Return values ================
+  return(list(k_X,
+              err_norm))
+  
+}
+
+```
+
+```{r misc_functions}
+
+# Read in misc. plotting functions
+source("plotting_functions.R")
+
+# Grab sample files
+img1 = read.csv("image1.csv")
+img2 = read.csv("image2.csv")
+img3 = read.csv("image3.csv")
+img4 = read.csv("image4.csv")
+
+```
+
+# Plots Below
+
+<details>
+
+<summary>Image 1 Plots</summary>
+
+ 1. A plot of the original image followed by the first 10 PCA approximations (i.e. 𝑘 = 1, … , 10)
+
+for that image;
+
+```{r draw_img1}
+
+first_10_img(img1)
+
+```
+
+ 2. A plot of the approximation error vs. 𝑘 for all possible values of 𝑘
+
+```{r error1_plot}
+
+k_error(img1)
+
+```
+
+ 3. A plot of the first eigenvector and the first PC score; provide an interpretation of the
+
+first eigenvector and the first PC score along with the plot;
+
+```{r eigen1_plot}
+
+# First eigenvector
+eigenvector_plot(img1)
+# First PC score
+pcscore_plot(img1)
+
+```
+
+ 4. Give your opinion for each image of at what value of 𝑘 you think the approximation to the image is sufficiently good.
+
+This image is sufficiently clear at *k* = 9; although the line is clear at *k* = 1, the yellow doesn't appear until *k* = 9.
+
+</details>
+
+
+<details>
+
+<summary>Image 2 Plots</summary>
+
+ 1. A plot of the original image followed by the first 10 PCA approximations (i.e. 𝑘 = 1, … , 10)
+
+for that image;
+
+```{r draw_img2}
+first_10_img(img2)
+```
+
+ 2. A plot of the approximation error vs. 𝑘 for all possible values of 𝑘
+
+```{r error2_plot}
+k_error(img2)
+```
+
+ 3. A plot of the first eigenvector and the first PC score; provide an interpretation of the
+
+first eigenvector and the first PC score along with the plot;
+
+```{r eigen2_plot}
+# First eigenvector
+eigenvector_plot(img2)
+# First PC score
+pcscore_plot(img2)
+```
+
+ 4. Give your opinion for each image of at what value of 𝑘 you think the approximation to the image is sufficiently good.
+
+This image is sufficiently clear at *k* = 2.
+
+</details>
+
+
+<details>
+
+<summary>Image 3 Plots</summary>
+
+ 1. A plot of the original image followed by the first 10 PCA approximations (i.e. 𝑘 = 1, … , 10)
+
+for that image;
+
+```{r draw_img3}
+first_10_img(img3)
+```
+
+ 2. A plot of the approximation error vs. 𝑘 for all possible values of 𝑘
+
+```{r error3_plot}
+k_error(img3)
+```
+
+ 3. A plot of the first eigenvector and the first PC score; provide an interpretation of the
+
+first eigenvector and the first PC score along with the plot;
+
+```{r eigen3_plot}
+# First eigenvector
+eigenvector_plot(img3)
+# First PC score
+pcscore_plot(img3)
+```
+
+ 4. Give your opinion for each image of at what value of 𝑘 you think the approximation to the image is sufficiently good.
+
+This image is sufficiently clear at *k* = 10, as in a viewer can tell that it's a dog if they squint.
+
+</details>
+
+
+<details>
+
+<summary>Image 4 Plots</summary>
+
+ 1. A plot of the original image followed by the first 10 PCA approximations (i.e. 𝑘 = 1, … , 10)
+
+for that image;
+
+```{r draw_img4}
+first_10_img(img4)
+```
+
+ 2. A plot of the approximation error vs. 𝑘 for all possible values of 𝑘
+
+```{r error4_plot}
+k_error(img4)
+```
+
+ 3. A plot of the first eigenvector and the first PC score; provide an interpretation of the first eigenvector and the first PC score along with the plot;
+
+```{r eigen4_plot}
+# First eigenvector
+eigenvector_plot(img4)
+# First PC score
+pcscore_plot(img4)
+```
+
+ 4. Give your opinion for each image of at what value of 𝑘 you think the approximation to the image is sufficiently good.
+
+This image is sufficiently clear at *k* = 4.
+
+</details>
+
+
+
+-----------------------------------------------

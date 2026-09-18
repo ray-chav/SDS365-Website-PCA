@@ -1,0 +1,12 @@
+/* Get a fancy font from Google Fonts */
+@import url('https://fonts.google.com/specimen/Playfair+Display');
+
+body {
+  font-family: 'Playfair Display';
+  color: white; /* text color */
+}
+
+/* Make text visible on inputs */
+.shiny-input-container {
+  color: #474747;
+}
