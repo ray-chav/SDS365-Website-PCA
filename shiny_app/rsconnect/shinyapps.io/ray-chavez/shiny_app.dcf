@@ -1,0 +1,12 @@
+name: shiny_app
+title: shiny_app
+username: ray-chavez
+account: ray-chavez
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 17946084
+bundleId: 12570754
+url: https://ray-chavez.shinyapps.io/shiny_app/
+version: 1
+asMultiple: FALSE
+asStatic: FALSE

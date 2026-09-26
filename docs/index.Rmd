@@ -299,8 +299,10 @@ k_error <- function(img){
 eigenvector_plot <- function(img){
   
   # Grab first eigenvector --------
-  cov_matrix = cov(img)
-  first_eigen = eigen(cov_matrix)$vectors[,1]
+  first_eigen <- prcomp(img,
+                        center = FALSE,
+                        scale. = FALSE
+                        )$rotation[, 1]
   
   # Make plot
   barplot(first_eigen, 
